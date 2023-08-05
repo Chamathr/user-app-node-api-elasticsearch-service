@@ -16,12 +16,21 @@ spec:
         - name: elasticsearch-deployment
           image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
           # resources:
-          #   limits:
-          #     memory: 10Gi
           #   requests:
+          #     cpu: 2Gi
           #     memory: 4Gi
+          #   limits:
+          #     cpu: 2Gi
+          #     memory: 4Gi
+          volumeMounts:
+            - name: elasticsearch-data
+              mountPath: /usr/share/elasticsearch/data
           ports:
             - containerPort: 9200
+      volumes:
+        - name: elasticsearch-data
+          persistentVolumeClaim:
+            claimName: elasticsearch-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -37,13 +46,14 @@ spec:
       targetPort: 9200
   type: LoadBalancer
 ---
-# apiVersion: v1
-# kind: PersistentVolumeClaim
-# metadata:
-#   name: elasticsearch-pvc
-# spec:
-#   accessModes:
-#     - ReadWriteOnce
-#   resources:
-#     requests:
-#       storage: 1Gi
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: elasticsearch-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  
