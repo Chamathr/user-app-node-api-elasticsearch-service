@@ -8,5 +8,6 @@ router.post('/index-create', ElasticsearchController.createIndex);
 router.delete('/index-delete', ElasticsearchController.deleteIndex);
 
 router.post('/insert', [celebrate(elasticsearch.elasticsearchValidation.insertElasticsearch)], ElasticsearchController.insertElasticsearch);
+router.post('/get', ElasticsearchController.getElasticsearch);
 
 module.exports = router;

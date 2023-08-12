@@ -1,5 +1,6 @@
 require('dotenv').config();
 const axios = require('axios');
+const ElasticsearchLib = require('../lib/elasticsearch.lib')
 
 const createIndex = async () => {
     try {
@@ -97,13 +98,22 @@ const deleteIndex = async () => {
 
 const insertElasticsearch = async (elasticsearchData) => {
     try {
-        console.log(elasticsearchData)
-        // await LogLib.sendEmil(logData)
-        return "success"
+        const resposeBody = await ElasticsearchLib.insertElasticsearch(elasticsearchData)
+        return resposeBody
     }
     catch (error) {
         throw error
     }
 }
 
-module.exports = { insertElasticsearch, createIndex, deleteIndex }
+const getElasticsearch = async (elasticsearchData) => {
+    try {
+        const resposeBody = await ElasticsearchLib.getElasticsearch(elasticsearchData)
+        return resposeBody
+    }
+    catch (error) {
+        throw error
+    }
+}
+
+module.exports = { insertElasticsearch, createIndex, deleteIndex, getElasticsearch }

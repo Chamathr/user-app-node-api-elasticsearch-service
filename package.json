@@ -6,6 +6,7 @@
     "start": "dotenv -e .env -- nodemon ./bin/www"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^8.9.0",
     "amqplib": "^0.10.3",
     "axios": "^1.4.0",
     "bcryptjs": "^2.4.3",
