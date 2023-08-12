@@ -1,13 +1,24 @@
 const { Client } = require('@elastic/elasticsearch');
 require('dotenv').config();
 
-const client = new Client({ node: process.env.ELASTICSEARCH_URL });
+const client = new Client({
+    node: process.env.ELASTICSEARCH_URL,
+    auth: {
+        apiKey: {
+            username: process.env.ELASTICSEARCH_USERNAME,
+            password: process.env.ELASTICSEARCH_PASSWORD,
+        }
+    }
+});
 
 const insertElasticsearch = async (elasticsearchData) => {
     try {
         const response = await client.index({
             index: elasticsearchData?.index,
-            body: elasticsearchData
+            body: {
+                timeStamp: new Date(),
+                ...elasticsearchData
+            }
         });
 
         const resposeBody = {
@@ -23,13 +34,40 @@ const insertElasticsearch = async (elasticsearchData) => {
 
 const getElasticsearch = async (elasticsearchData) => {
     try {
-        const response = await client.search({
-            index: elasticsearchData["index-key"],
-            body: {
-                query: {
-                    match_all: {}
-                }
+        let searchQuery = {}
+        const matchArr = []
+        if (!elasticsearchData?.serviceKey && !elasticsearchData?.actionKey) {
+            searchQuery.match_all = {}
+        }
+        else {
+            if (elasticsearchData?.serviceKey) {
+                matchArr.push(
+                    {
+                        match: {
+                            service: elasticsearchData?.serviceKey
+                        }
+                    }
+                )
             }
+            if (elasticsearchData?.actionKey) {
+                matchArr.push(
+                    {
+                        match: {
+                            action: elasticsearchData?.actionKey
+                        }
+                    }
+                )
+            }
+            searchQuery.bool = {}
+            searchQuery.bool.must = matchArr
+        }
+
+        const response = await client.search({
+            index: elasticsearchData?.indexKey,
+            query: searchQuery,
+            sort: [
+                { timeStamp: 'desc' }
+            ]
         });
 
         if (response?.hits?.hits?.length) {
@@ -42,9 +80,9 @@ const getElasticsearch = async (elasticsearchData) => {
         }
         else {
             const resposeBody = {
-                status: 500,
-                message: 'Something went wrong',
-                body: 'Something went wrong'
+                status: 404,
+                message: 'Not found',
+                body: 'Not found'
             }
             return resposeBody
         }
