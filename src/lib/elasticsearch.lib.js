@@ -1,12 +1,15 @@
 const { Client } = require('@elastic/elasticsearch');
-require('dotenv').config();
+const ElasticsearchConfig = require('../config/elasticsearch.config')
+
+const elasticsearchUsername = ElasticsearchConfig.ELASTICSEARCH_USERNAME
+const elasticsearchPassword = ElasticsearchConfig.ELASTICSEARCH_PASSWORD
 
 const client = new Client({
     node: process.env.ELASTICSEARCH_URL,
     auth: {
         apiKey: {
-            username: process.env.ELASTICSEARCH_USERNAME,
-            password: process.env.ELASTICSEARCH_PASSWORD,
+            username: elasticsearchUsername,
+            password: elasticsearchPassword,
         }
     }
 });

@@ -1,19 +1,25 @@
 require('dotenv').config();
 const axios = require('axios');
 const ElasticsearchLib = require('../lib/elasticsearch.lib')
+const ElasticsearchConfig = require('../config/elasticsearch.config')
+
+const elasticsearchUrl = ElasticsearchConfig.ELASTICSEARCH_URL
+const elasticsearchIndex = ElasticsearchConfig.ELASTICSEARCH_INDEX
+const elasticsearchUsername = ElasticsearchConfig.ELASTICSEARCH_USERNAME
+const elasticsearchPassword = ElasticsearchConfig.ELASTICSEARCH_PASSWORD
 
 const createIndex = async () => {
     try {
 
-        const requestUrl = `${process.env.ELASTICSEARCH_URL}/${process.env.ELASTICSEARCH_INDEX}`
+        const requestUrl = `${elasticsearchUrl}/${elasticsearchIndex}`
 
         const requestConfig = {
             headers: {
                 'Content-Type': 'application/json'
             },
             auth: {
-                username: process.env.ELASTICSEARCH_USERNAME,
-                password: process.env.ELASTICSEARCH_PASSWORD
+                username: elasticsearchUsername,
+                password: elasticsearchPassword
             }
         }
         const requestBody = {
@@ -60,15 +66,15 @@ const createIndex = async () => {
 const deleteIndex = async () => {
     try {
 
-        const requestUrl = `${process.env.ELASTICSEARCH_URL}/${process.env.ELASTICSEARCH_INDEX}`
+        const requestUrl = `${elasticsearchUrl}/${elasticsearchIndex}`
 
         const requestConfig = {
             headers: {
                 'Content-Type': 'application/json'
             },
             auth: {
-                username: process.env.ELASTICSEARCH_USERNAME,
-                password: process.env.ELASTICSEARCH_PASSWORD
+                username: elasticsearchUsername,
+                password: elasticsearchPassword
             }
         }
 

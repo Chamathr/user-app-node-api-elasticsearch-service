@@ -14,23 +14,24 @@ spec:
     spec:
       containers:
         - name: elasticsearch-deployment
-          image: docker.elastic.co/elasticsearch/elasticsearch:7.10.0
-          # resources:
-          #   requests:
-          #     cpu: 2Gi
-          #     memory: 4Gi
-          #   limits:
-          #     cpu: 2Gi
-          #     memory: 4Gi
-          volumeMounts:
-            - name: elasticsearch-data
-              mountPath: /usr/share/elasticsearch/data
+          image: chamathranaweera/elasticsearch-service:dev
+          imagePullPolicy: Always
           ports:
-            - containerPort: 9200
-      volumes:
-        - name: elasticsearch-data
-          persistentVolumeClaim:
-            claimName: elasticsearch-pvc
+          - containerPort: 7000
+          # livenessProbe:
+          #   httpGet:
+          #     path: /user/api/v1/user-service
+          #     port: 8000
+          #   initialDelaySeconds: 300
+          #   periodSeconds: 300
+          #   failureThreshold: 2
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 500m
+              memory: 1Gi
 ---
 apiVersion: v1
 kind: Service
@@ -40,20 +41,8 @@ spec:
   selector:
     app: elasticsearch-deployment
   ports:
-    - name: elastic-port
+    - name: elasticsearch-port
       protocol: TCP
-      port: 9200
-      targetPort: 9200
-  type: LoadBalancer
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: elasticsearch-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 10Gi
-  
+      port: 7000
+      targetPort: 7000
+  type: ClusterIP
