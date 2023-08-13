@@ -19,6 +19,8 @@ COPY . .
 
 # Set an environment variable for the RabbitMQ server host and mysql server host
 ENV RABBITMQ_HOST=host.docker.internal
+ENV ELASTICSEARCH_HOST=host.docker.internal
+
 
 # Expose port 7000
 EXPOSE 7000
