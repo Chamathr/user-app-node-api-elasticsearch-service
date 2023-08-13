@@ -1,21 +1,25 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: redis-deployment
 spec:
   selector:
     matchLabels:
-      app: redis
+      app: redis-deployment
   template:
     metadata:
       labels:
-        app: redis
+        app: redis-deployment
     spec:
       containers:
-      - name: redis
+      - name: redis-deployment
         image: redis:latest
         ports:
         - containerPort: 6379
+        command:
+            - redis-server
+            - --requirepass
+            - redis@123
 ---
 apiVersion: v1
 kind: Service
@@ -23,7 +27,7 @@ metadata:
   name: redis-service
 spec:
   selector:
-    app: redis
+    app: redis-deployment
   ports:
     - protocol: TCP
       port: 6379
